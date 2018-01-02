@@ -1,0 +1,33 @@
+version: "3.2"
+services:
+  filerun:
+    build: .
+    ports:
+      - "8000:80"
+    volumes:
+      - webroot:/usr/share/nginx/html
+      - ./php/etc/nginx/conf.d/:/etc/nginx/conf.d:ro
+      - ./php/etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - filedata:/user-files
+  php:
+    build: ./php
+    ports:
+      - "6800:6800"
+    expose:
+      - "9000"
+    volumes:
+      - webroot:/usr/share/nginx/html
+      - filedata:/user-files
+volumes:
+  webroot:
+    driver: local
+    driver_opts:
+      type: none
+      device: $PWD/filerun
+      o: bind
+  filedata:
+    driver: local
+    driver_opts:
+      type: none
+      device: $PWD/user-files
+      o: bind
